@@ -17,6 +17,7 @@ Nov '21
 #include "utility.h"
 #include "displayOled.h"
 #include "node.h"
+#include "logsheet.h"
 
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;

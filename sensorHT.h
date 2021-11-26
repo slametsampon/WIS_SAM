@@ -15,6 +15,8 @@
 #include "model.h"
 
 const boolean SIMULATION = true;
+const int ALFA_EMA = 80;
+
 const int PARAMETER_VALUE = 0;
 const int PARAMETER_LOW_RANGE = 1;
 const int PARAMETER_HIGH_RANGE = 2;
@@ -52,5 +54,6 @@ private:
   unsigned long _prevMilli, _samplingTime;
   DHT *_dht;
   paramHT _tempParam, _humidParam;
+  void _getSensorValue();
 };
 #endif
