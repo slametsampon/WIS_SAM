@@ -20,6 +20,9 @@ class DisplayOled
 public:
     DisplayOled(String);
     void attachOled(Adafruit_SSD1306 *);
+    void logoDisplay();    //display logo GMF
+    void welcomeDisplay(); //welcome display
+    void stepDisplay(int); //display step of setup
     void displayHT(float, float);
     void info();
 

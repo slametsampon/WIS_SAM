@@ -1,28 +1,28 @@
-#include "oDeDu.h"
+#include "node.h"
 
-ODeDu::ODeDu(String id) : _id(id) {}
+Node::Node(String id) : _id(id) {}
 
-void ODeDu::init(int pin)
+void Node::init(int pin)
 {
     _irrigationValve = pin;
     pinMode(_irrigationValve, OUTPUT);
 
     //set default value
-    _config.idNode = 9;
-    _config.mode = AUTO;
-    _config.cyclic = ONE_SHOOT;
-    _config.onDelay = 90;    //minute
-    _config.onDuration = 35; //minute
+    _paramNode.id = 9;
+    _paramNode.mode = AUTO;
+    _paramNode.cyclic = ONE_SHOOT;
+    _paramNode.onDelay = 90;    //minute
+    _paramNode.onDuration = 35; //minute
 }
 
-void ODeDu::setConfig(config configData)
+void Node::setConfig(paramNode paramNodeData)
 {
-    _config = configData;
+    _paramNode = paramNodeData;
 }
 
-void ODeDu::execute(unsigned long samplingTime)
+void Node::execute(unsigned long samplingTime)
 {
-    int oprStatus = IDLE;
+    int nodeStatus = IDLE;
     if ((millis() - _prevMilli) > samplingTime)
     {
         _prevMilli = millis();
@@ -37,26 +37,26 @@ void ODeDu::execute(unsigned long samplingTime)
             {
                 _firstRun = false;
                 _prevOnDelay = millis();
-                oprStatus = WAIT;
+                nodeStatus = WAIT;
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_config.onDelay * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_paramNode.onDelay * 60 * 1000))
                 {
-                    _oprStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _oprStatus.onDelay = _config.onDelay - _oprStatus.onDelay;
+                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
+                    _nodeStatus.onDelay = _paramNode.onDelay - _nodeStatus.onDelay;
 
-                    oprStatus = ACTIVE;
+                    nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_config.onDuration * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_paramNode.onDuration * 60 * 1000))
                     {
-                        _oprStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _oprStatus.onDuration = _config.onDuration - _oprStatus.onDuration;
+                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
+                        _nodeStatus.onDuration = _paramNode.onDuration - _nodeStatus.onDuration;
 
-                        oprStatus = IDLE;
+                        nodeStatus = IDLE;
                         _firstRun = true;
                     }
                 }
@@ -68,34 +68,34 @@ void ODeDu::execute(unsigned long samplingTime)
             {
                 _firstRun = false;
                 _prevOnDelay = millis();
-                oprStatus = WAIT;
+                nodeStatus = WAIT;
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_config.onDelay * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_paramNode.onDelay * 60 * 1000))
                 {
-                    _oprStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _oprStatus.onDelay = _config.onDelay - _oprStatus.onDelay;
+                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
+                    _nodeStatus.onDelay = _paramNode.onDelay - _nodeStatus.onDelay;
 
-                    oprStatus = ACTIVE;
+                    nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_config.onDuration * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_paramNode.onDuration * 60 * 1000))
                     {
-                        _oprStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _oprStatus.onDuration = _config.onDuration - _oprStatus.onDuration;
+                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
+                        _nodeStatus.onDuration = _paramNode.onDuration - _nodeStatus.onDuration;
 
                         _prevOnDelay = millis();
-                        oprStatus = WAIT;
+                        nodeStatus = WAIT;
                     }
                 }
             }
             break;
 
         case MANUAL_CON: //Manual Continuous
-            oprStatus = ACTIVE;
+            nodeStatus = ACTIVE;
             break;
 
         case AUTO: //Auto
@@ -103,26 +103,26 @@ void ODeDu::execute(unsigned long samplingTime)
             {
                 _firstRun = false;
                 _prevOnDelay = millis();
-                oprStatus = WAIT;
+                nodeStatus = WAIT;
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_config.onDelay * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_paramNode.onDelay * 60 * 1000))
                 {
-                    _oprStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _oprStatus.onDelay = _config.onDelay - _oprStatus.onDelay;
+                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
+                    _nodeStatus.onDelay = _paramNode.onDelay - _nodeStatus.onDelay;
 
-                    oprStatus = ACTIVE;
+                    nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_config.onDuration * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_paramNode.onDuration * 60 * 1000))
                     {
-                        _oprStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _oprStatus.onDuration = _config.onDuration - _oprStatus.onDuration;
+                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
+                        _nodeStatus.onDuration = _paramNode.onDuration - _nodeStatus.onDuration;
 
-                        oprStatus = IDLE;
+                        nodeStatus = IDLE;
                         _firstRun = true;
                     }
                 }
@@ -133,9 +133,9 @@ void ODeDu::execute(unsigned long samplingTime)
             break;
         }
 
-        _oprStatus.status = oprStatus;
+        _nodeStatus.status = nodeStatus;
 
-        if (oprStatus == ACTIVE)
+        if (nodeStatus == ACTIVE)
         {
             //send command to activate irrigation valve
             digitalWrite(_irrigationValve, HIGH);
@@ -148,7 +148,7 @@ void ODeDu::execute(unsigned long samplingTime)
     }
 }
 
-String ODeDu::getConfig()
+String Node::getConfig()
 {
     /*
         {
@@ -162,18 +162,18 @@ String ODeDu::getConfig()
     String strConfig;
     StaticJsonDocument<96> doc;
 
-    doc["idNode"] = _config.idNode;
-    doc["mode"] = _config.mode;
-    doc["cyclic"] = _config.cyclic;
-    doc["onDelay"] = _config.onDelay;
-    doc["onDuration"] = _config.onDuration;
+    doc["idNode"] = _paramNode.id;
+    doc["mode"] = _paramNode.mode;
+    doc["cyclic"] = _paramNode.cyclic;
+    doc["onDelay"] = _paramNode.onDelay;
+    doc["onDuration"] = _paramNode.onDuration;
 
     serializeJson(doc, strConfig);
 
     return strConfig;
 }
 
-String ODeDu::getStatus()
+String Node::getStatus()
 {
     /*
         {
@@ -186,20 +186,20 @@ String ODeDu::getStatus()
     String strStatus;
     StaticJsonDocument<48> doc;
 
-    doc["mode"] = _oprStatus.mode;
-    doc["status"] = _oprStatus.status;
-    doc["onDelay"] = _oprStatus.onDelay;
-    doc["onDuration"] = _oprStatus.onDuration;
+    doc["mode"] = _nodeStatus.mode;
+    doc["status"] = _nodeStatus.status;
+    doc["onDelay"] = _nodeStatus.onDelay;
+    doc["onDuration"] = _nodeStatus.onDuration;
 
     serializeJson(doc, strStatus);
     return strStatus;
 }
 
-int ODeDu::_operationLogic()
+int Node::_operationLogic()
 {
-    int mode = _config.mode;
-    int cyclic = _config.cyclic;
-    unsigned long onDelay = _config.onDelay;
+    int mode = _paramNode.mode;
+    int cyclic = _paramNode.cyclic;
+    unsigned long onDelay = _paramNode.onDelay;
     int oprMode = IDLE;
 
     switch (mode)
@@ -229,6 +229,6 @@ int ODeDu::_operationLogic()
     default:
         break;
     }
-    _oprStatus.mode = oprMode;
+    _nodeStatus.mode = oprMode;
     return oprMode;
 }

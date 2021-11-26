@@ -51,24 +51,6 @@ const int USER_PASSWORD = 1;
 const int USER_EMAIL = 2;
 const int USER_LEVEL = 3;
 
-const int PARAMETER_VALUE = 0;
-const int PARAMETER_LOW_RANGE = 1;
-const int PARAMETER_HIGH_RANGE = 2;
-const int PARAMETER_LOW_LIMIT = 3;
-const int PARAMETER_HIGH_LIMIT = 4;
-const int PARAMETER_ALFA_EMA = 5;
-const int PARAMETER_ALARM = 6;
-
-//commSer header code
-const int DATA_OPERATION = 0;
-const int DATA_PARAMETER = 1;
-const int REMOTE_PARAMETER = 2;
-const int REMOTE_OPERATION = 3;
-
-const int NO_ALARM = 0;
-const int HIGH_ALARM = 1;
-const int LOW_ALARM = 2;
-
 const int LEVEL_ENGINEER = 0;
 const int LEVEL_OPERATOR = 9;
 
@@ -105,7 +87,7 @@ typedef struct logsheetData
     float humidity;
 } logsheetData;
 
-typedef struct param
+typedef struct paramHT
 {
     String unit; //unit
     float value;
@@ -115,6 +97,25 @@ typedef struct param
     float lowLimit;  //for alarm low
     float alfaEma;   //alfa for EMA Filter (0 - 100) in percentage
     int alarm;
-} param;
+} paramHT;
+
+typedef struct paramNode
+{
+    int prev;   // 0 - 99
+    int id;     // 0 - 99
+    int next;   // 0 - 99
+    int mode;   //(Manual = 0, Auto = 1, Repeater = 2)
+    int cyclic; // (One Shoot = 0, Cyclic = 1)
+    unsigned long onDelay;
+    unsigned long onDuration;
+} paramNode;
+
+typedef struct nodeStatus
+{
+    int mode;   //(Auto, Manual-one, Manual-cyc, Manual-con)
+    int status; //(Idle, Wait, Active)
+    unsigned long onDelay;
+    unsigned long onDuration;
+} nodeStatus;
 
 #endif

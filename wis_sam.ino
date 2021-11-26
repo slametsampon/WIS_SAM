@@ -12,12 +12,11 @@ Nov '21
 #include <ESPAsyncWebServer.h>
 #include <ESP8266WiFiMulti.h>
 
-#include "model.h"
 #include "wis_sam.h"
-#include "oDeDu.h"
 #include "sensorHT.h"
 #include "utility.h"
 #include "displayOled.h"
+#include "node.h"
 
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;
@@ -31,6 +30,7 @@ DHT dhtSensor(DHTPIN, DHTTYPE);
 SensorHT sensorHT("sensor HT");
 FileSystem localStorage("local storage");
 DisplayOled displayOled("display oled");
+Node node("node");
 
 ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 // Create AsyncWebServer object on port 80

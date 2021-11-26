@@ -9,7 +9,7 @@
  * Manual - Off/Idle (On Duration = 0)
  * 
  * data model :
- * config = {
+ * paramNode = {
  *  "idNode" : 9,
  *  "mode" : 1, (Stop = 0, Manual = 1, Auto = 2)
  *  "cyclic" : 0, (One Shoot = 0, Cyclic = 1)
@@ -28,11 +28,13 @@
  *  "onDuration" : yyyy
  * }
 *********/
-#ifndef model_h
-#define model_h
+#ifndef node_h
+#define node_h
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+
+#include "model.h"
 
 enum OUTPUT_STATUS
 {
@@ -62,32 +64,13 @@ enum CYCLIC_OPR
     CYCLIC
 };
 
-typedef struct config
-{
-    int prevNode; // 0 - 99
-    int idNode;   // 0 - 99
-    int nextNode; // 0 - 99
-    int mode;     //(Manual = 0, Auto = 1, Repeater = 2)
-    int cyclic;   // (One Shoot = 0, Cyclic = 1)
-    unsigned long onDelay;
-    unsigned long onDuration;
-} config;
-
-typedef struct oprStatus
-{
-    int mode;   //(Auto, Manual-one, Manual-cyc, Manual-con)
-    int status; //(Idle, Wait, Active)
-    unsigned long onDelay;
-    unsigned long onDuration;
-} oprStatus;
-
-class ODeDu
+class Node
 {
 public:
-    ODeDu(String);
+    Node(String);
     String getConfig(); //JSON format
     String getStatus(); //JSON format
-    void setConfig(config);
+    void setConfig(paramNode);
     void init(int);
     void execute(unsigned long); //sampling periode ms
     void info();
@@ -99,8 +82,9 @@ private:
     int _irrigationValve;
     String _id;
     unsigned long _prevMilli, _samplingTime, _prevOnDelay, _prevOnDuration;
-    config _config;
-    oprStatus _oprStatus;
+    paramNode _paramNode;
+    paramNode _test;
+    nodeStatus _nodeStatus;
 };
 
 #endif

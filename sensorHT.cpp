@@ -7,12 +7,12 @@ void SensorHT::attachSensor(DHT *dht)
     _dht = dht;
 }
 
-void SensorHT::setTempParam(param tempParam)
+void SensorHT::setTempParam(paramHT tempParam)
 {
     _tempParam = tempParam;
 }
 
-void SensorHT::setHumidParam(param humidParam)
+void SensorHT::setHumidParam(paramHT humidParam)
 {
     _humidParam = humidParam;
 }
