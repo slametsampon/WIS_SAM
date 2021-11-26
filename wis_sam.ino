@@ -17,6 +17,7 @@ Nov '21
 #include "oDeDu.h"
 #include "sensorHT.h"
 #include "utility.h"
+#include "displayOled.h"
 
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;
@@ -25,9 +26,11 @@ AccesUser accessEngineer("accessEngineer");
 AccesUser accessOperator("accessOperator");
 AccesUser activeUser("activeUser");
 
+Adafruit_SSD1306 oled(OLED_RESET);
 DHT dhtSensor(DHTPIN, DHTTYPE);
 SensorHT sensorHT("sensor HT");
 FileSystem localStorage("local storage");
+DisplayOled displayOled("display oled");
 
 ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 // Create AsyncWebServer object on port 80
@@ -40,6 +43,10 @@ void setup()
     {
         ;
     }
+
+    //init Oled display
+    oled.begin(SSD1306_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3C (for the 64x48)
+    displayOled.attachOled(&oled);
 
     // Initialize LittleFS
     Serial.println("Begin LittleFS");

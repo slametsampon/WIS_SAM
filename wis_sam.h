@@ -1,6 +1,7 @@
 #define DHTPIN 2 // what pin we're connected to ????
 
 #define DHTTYPE DHT11
+#define OLED_RESET 0 // GPIO0
 
 const boolean DEBUG = true;
 
