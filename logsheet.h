@@ -22,9 +22,6 @@ const int SECOND_6 = 6;     //average at last one
 const int SECOND_60 = 60;   //average at last one
 const int TRENDING_24 = 24; //for trending data
 
-const String PATH_LS = "/logsheet/";
-const String SENSOR_FILE_CFG = "sensors.cfg";
-const String HEADER = "TIME;TEMPERATURE;HUMIDITY\n";
 const int DAILY_SIZE = 425; //26 + (16*24) = 410
 
 enum DayOfWeek
@@ -42,13 +39,17 @@ class Logsheet
 public:
     Logsheet(String);
     void attachFileSystem(FileSystem *);
+    void attachSensor(SensorHT *);
     String getHourlyAvg(int);
     String getTrendingData();
+    void setTime(struct tm);
     void execute(unsigned long); //sampling periode ms
     void info();
 
 private:
     String _getDayOfWeek(int);
+    void _setupDefaultParamHT();
+    void _setupFileParamHT(String);
     void _recordEvent();
     void _recordLogsheet();
     void _minuteLogsheet();
@@ -67,7 +68,11 @@ private:
     int _samplingSec, _nbrSamplingSec, _samplingTrend;
     boolean _minuteEvent, _hourEvent, _dayEvent;
     boolean _saveHourlyEvent, _saveDailyEvent;
+    boolean _synchronized = false;
+    struct tm _tm;
+
     FileSystem *_localStorage;
+    SensorHT *_sensorHT;
     logsheetData _logsheetSecond[SECOND_60];
     logsheetData _logsheetMinute[MINUTE_60];
     logsheetData _logsheetTrending[TRENDING_24];

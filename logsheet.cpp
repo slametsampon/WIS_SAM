@@ -12,6 +12,13 @@ Logsheet::Logsheet(String id) : _id(id)
     _samplingTrend = 0;
 }
 
+void Logsheet::attachSensor(SensorHT *sensorHT)
+{
+    _sensorHT = sensorHT;
+    //_setupDefaultParameter();
+    _setupFileParamHT(SENSOR_FILE_CFG);
+}
+
 void Logsheet::attachFileSystem(FileSystem *lc)
 {
     _localStorage = lc;
@@ -20,6 +27,8 @@ void Logsheet::attachFileSystem(FileSystem *lc)
 void Logsheet::info()
 {
     Serial.println("Logsheet::info()");
+    //_paramTemperature->info();
+    //_paramHumidity->info();
 }
 
 String Logsheet::getHourlyAvg(int dWeek)

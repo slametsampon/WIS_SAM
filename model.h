@@ -54,6 +54,31 @@ const int USER_LEVEL = 3;
 const int LEVEL_ENGINEER = 0;
 const int LEVEL_OPERATOR = 9;
 
+const boolean SIMULATION = true;
+const int ALFA_EMA = 80;
+
+const int PARAM_HT_VALUE = 0;
+const int PARAM_HT_LOW_RANGE = 1;
+const int PARAM_HT_HIGH_RANGE = 2;
+const int PARAM_HT_LOW_LIMIT = 3;
+const int PARAM_HT_HIGH_LIMIT = 4;
+const int PARAM_HT_ALFA_EMA = 5;
+const int PARAM_HT_ALARM = 6;
+
+const int NO_ALARM = 0;
+const int HIGH_ALARM = 1;
+const int LOW_ALARM = 2;
+
+const int PARAM_NODE_ID = 0;
+const int PARAM_NODE_PREV = 1;
+const int PARAM_NODE_NEXT = 2;
+const int PARAM_NODE_MODE_OPR = 3;
+const int PARAM_NODE_STATUS = 4;
+const int PARAM_NODE_MODE = 5;
+const int PARAM_NODE_CYCLIC = 6;
+const int PARAM_NODE_ON_DELAY = 7;
+const int PARAM_NODE_ON_OPERATION = 8;
+
 typedef struct userData
 {
     String username; //engineer
@@ -99,13 +124,34 @@ typedef struct paramHT
     int alarm;
 } paramHT;
 
+class AccessParamHT
+{
+
+public:
+    AccessParamHT(String);
+    String getJson();
+    String getStatus();
+    paramHT get();
+    float get(int);
+    void set(paramHT);
+    void set(int, float);
+    void info();
+
+private:
+    String _id;
+    paramHT _paramHT;
+
+}; //end of class
+
 typedef struct paramNode
 {
-    int prev;   // 0 - 99
-    int id;     // 0 - 99
-    int next;   // 0 - 99
-    int mode;   //(Manual = 0, Auto = 1, Repeater = 2)
-    int cyclic; // (One Shoot = 0, Cyclic = 1)
+    int id;      // 0 - 99
+    int prev;    // 0 - 99
+    int next;    // 0 - 99
+    int modeOpr; //(Auto, Manual-one, Manual-cyc, Manual-con)
+    int status;  //(Idle, Wait, Active)
+    int mode;    //(Manual = 0, Auto = 1, Repeater = 2)
+    int cyclic;  // (One Shoot = 0, Cyclic = 1)
     unsigned long onDelay;
     unsigned long onDuration;
 } paramNode;
@@ -117,5 +163,23 @@ typedef struct nodeStatus
     unsigned long onDelay;
     unsigned long onDuration;
 } nodeStatus;
+
+class AccessParamNode
+{
+
+public:
+    AccessParamNode(String);
+    String getJson();
+    paramNode get();
+    float get(int);
+    void set(paramNode);
+    void set(int, float);
+    void info();
+
+private:
+    String _id;
+    paramNode _paramNode;
+
+}; //end of class
 
 #endif
