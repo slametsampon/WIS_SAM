@@ -4,24 +4,24 @@ SensorHT::SensorHT(String id) : _id(id) {}
 
 void SensorHT::attachSensor(DHT *dht)
 {
-    _dht = dht;
+  _dht = dht;
 }
 
 void SensorHT::attachTempParam(AccessParamHT *tempParam)
 {
-    _tempParam = tempParam;
+  _tempParam = tempParam;
 }
 
 void SensorHT::attachHumidParam(AccessParamHT *humidParam)
 {
-    _humidParam = humidParam;
+  _humidParam = humidParam;
 }
 
 String SensorHT::getParam()
 {
-    String output;
+  String output;
 
-    /*
+  /*
     {
     "Temperature": {
       "unit":"°C",
@@ -65,71 +65,71 @@ String SensorHT::getParam()
 
   */
 
-    StaticJsonDocument<384> doc;
+  StaticJsonDocument<384> doc;
 
-    paramHT dtParam = _tempParam->get();
-    JsonObject Temperature = doc.createNestedObject("Temperature");
-    Temperature["unit"] = dtParam.unit;
-    Temperature["value"] = dtParam.value;
-    Temperature["highRange"] = dtParam.highRange;
-    Temperature["lowRange"] = dtParam.lowRange;
-    Temperature["highLimit"] = dtParam.highLimit;
-    Temperature["lowLimit"] = dtParam.lowLimit;
-    Temperature["alfaEma"] = dtParam.alfaEma;
+  paramHT dtParam = _tempParam->get();
+  JsonObject Temperature = doc.createNestedObject("Temperature");
+  Temperature["unit"] = dtParam.unit;
+  Temperature["value"] = dtParam.value;
+  Temperature["highRange"] = dtParam.highRange;
+  Temperature["lowRange"] = dtParam.lowRange;
+  Temperature["highLimit"] = dtParam.highLimit;
+  Temperature["lowLimit"] = dtParam.lowLimit;
+  Temperature["alfaEma"] = dtParam.alfaEma;
 
-    dtParam = _humidParam->get();
-    JsonObject Humidity = doc.createNestedObject("Humidity");
-    Humidity["unit"] = dtParam.unit;
-    Humidity["value"] = dtParam.value;
-    Humidity["highRange"] = dtParam.highRange;
-    Humidity["lowRange"] = dtParam.lowRange;
-    Humidity["highLimit"] = dtParam.highLimit;
-    Humidity["lowLimit"] = dtParam.lowLimit;
-    Humidity["alfaEma"] = dtParam.alfaEma;
+  dtParam = _humidParam->get();
+  JsonObject Humidity = doc.createNestedObject("Humidity");
+  Humidity["unit"] = dtParam.unit;
+  Humidity["value"] = dtParam.value;
+  Humidity["highRange"] = dtParam.highRange;
+  Humidity["lowRange"] = dtParam.lowRange;
+  Humidity["highLimit"] = dtParam.highLimit;
+  Humidity["lowLimit"] = dtParam.lowLimit;
+  Humidity["alfaEma"] = dtParam.alfaEma;
 
-    serializeJson(doc, output);
-    return output;
+  serializeJson(doc, output);
+  return output;
 }
 
 void SensorHT::info()
 {
-    Serial.println("SensorHT::info()");
-    _tempParam->info();
-    _humidParam->info();
+  Serial.println("SensorHT::info()");
+  _tempParam->info();
+  _humidParam->info();
 }
 
 void SensorHT::_setDefaultParam()
 {
-    paramHT dtParam;
-    Serial.println("SensorHT::_setDefaultParam()");
+  paramHT dtParam;
+  Serial.println("SensorHT::_setDefaultParam()");
 
-    //parameter temperature
-    dtParam.unit = "°C";
-    dtParam.value = 35;
-    dtParam.highRange = 50;
-    dtParam.lowRange = -10;
-    dtParam.highLimit = 40;
-    dtParam.lowLimit = 10;
-    dtParam.alfaEma = ALFA_EMA;
-    dtParam.alarm = NO_ALARM;
-    _tempParam->set(dtParam);
+  //parameter temperature
+  dtParam.unit = "°C";
+  dtParam.value = 35;
+  dtParam.highRange = 50;
+  dtParam.lowRange = -10;
+  dtParam.highLimit = 40;
+  dtParam.lowLimit = 10;
+  dtParam.alfaEma = ALFA_EMA;
+  dtParam.alarm = NO_ALARM;
+  _tempParam->set(dtParam);
 
-    //parameter humidity
-    dtParam.unit = "%";
-    dtParam.value = 70;
-    dtParam.highRange = 100;
-    dtParam.lowRange = 0;
-    dtParam.highLimit = 90;
-    dtParam.lowLimit = 40;
-    dtParam.alfaEma = ALFA_EMA;
-    dtParam.alarm = NO_ALARM;
-    _humidParam->set(dtParam);
+  //parameter humidity
+  dtParam.unit = "%";
+  dtParam.value = 70;
+  dtParam.highRange = 100;
+  dtParam.lowRange = 0;
+  dtParam.highLimit = 90;
+  dtParam.lowLimit = 40;
+  dtParam.alfaEma = ALFA_EMA;
+  dtParam.alarm = NO_ALARM;
+  _humidParam->set(dtParam);
 }
 
 void SensorHT::_setFileParam(String fileName)
 {
 
-    /*
+  /*
     {
     "Temperature": {
       "unit":"°C",
@@ -210,60 +210,174 @@ void SensorHT::_setFileParam(String fileName)
   int Humidity_alarm = Humidity["alarm"]; // 0
 
   */
-    paramHT dtParam;
-    Serial.println("SensorHT::_setFileParam(String fileName)");
+  paramHT dtParam;
+  Serial.println("SensorHT::_setFileParam(String fileName)");
 
-    String fullFileName = PATH_LS + fileName;
+  String fullFileName = PATH_LS + fileName;
 
-    Serial.print("fullFileName : ");
-    Serial.println(fullFileName);
+  Serial.print("fullFileName : ");
+  Serial.println(fullFileName);
 
-    char fileNameChar[31];
-    fullFileName.toCharArray(fileNameChar, 31);
+  char fileNameChar[31];
+  fullFileName.toCharArray(fileNameChar, 31);
 
-    File file = LittleFS.open(fileNameChar, "r");
-    if (!file)
+  File file = LittleFS.open(fileNameChar, "r");
+  if (!file)
+  {
+    Serial.println("Failed to open file for reading");
+  }
+  else
+  {
+
+    StaticJsonDocument<512> doc;
+
+    DeserializationError error = deserializeJson(doc, file);
+
+    if (error)
     {
-        Serial.println("Failed to open file for reading");
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
     }
-    else
+
+    JsonObject Temperature = doc["Temperature"];
+    //parameter temperature
+    dtParam.unit = "°C";
+    dtParam.value = Temperature["value"];
+    dtParam.highRange = Temperature["highRange"];
+    dtParam.lowRange = Temperature["lowRange"];
+    dtParam.highLimit = Temperature["highLimit"];
+    dtParam.lowLimit = Temperature["lowLimit"];
+    dtParam.alfaEma = Temperature["alfaEma"];
+    dtParam.alarm = Temperature["alarm"];
+    _tempParam->set(dtParam);
+
+    JsonObject Humidity = doc["Humidity"];
+    //parameter humidity
+    dtParam.unit = "%";
+    dtParam.value = Humidity["value"];
+    dtParam.highRange = Humidity["highRange"];
+    dtParam.lowRange = Humidity["lowRange"];
+    dtParam.highLimit = Humidity["highLimit"];
+    dtParam.lowLimit = Humidity["lowLimit"];
+    dtParam.alfaEma = Humidity["alfaEma"];
+    dtParam.alarm = Humidity["alarm"];
+    _humidParam->set(dtParam);
+
+    file.close();
+  }
+}
+
+String SensorHT::getValues()
+{
+  /*
     {
-
-        StaticJsonDocument<512> doc;
-
-        DeserializationError error = deserializeJson(doc, file);
-
-        if (error)
-        {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.f_str());
-            return;
+        "Temperature": {
+        "value": 48.748010,
+        "status": "AlarmH"
+        },
+        "Humidity": {
+        "value": 70.86,
+        "status": "Normal"
         }
-
-        JsonObject Temperature = doc["Temperature"];
-        //parameter temperature
-        dtParam.unit = "°C";
-        dtParam.value = Temperature["value"];
-        dtParam.highRange = Temperature["highRange"];
-        dtParam.lowRange = Temperature["lowRange"];
-        dtParam.highLimit = Temperature["highLimit"];
-        dtParam.lowLimit = Temperature["lowLimit"];
-        dtParam.alfaEma = Temperature["alfaEma"];
-        dtParam.alarm = Temperature["alarm"];
-        _tempParam->set(dtParam);
-
-        JsonObject Humidity = doc["Humidity"];
-        //parameter humidity
-        dtParam.unit = "%";
-        dtParam.value = Humidity["value"];
-        dtParam.highRange = Humidity["highRange"];
-        dtParam.lowRange = Humidity["lowRange"];
-        dtParam.highLimit = Humidity["highLimit"];
-        dtParam.lowLimit = Humidity["lowLimit"];
-        dtParam.alfaEma = Humidity["alfaEma"];
-        dtParam.alarm = Humidity["alarm"];
-        _humidParam->set(dtParam);
-
-        file.close();
     }
+    */
+  String output;
+  StaticJsonDocument<128> doc;
+
+  float t = _tempParam->get(PARAM_HT_VALUE);
+  int tInt = t * 100;
+  t = tInt / 100.0; //get 2 digits
+
+  float h = _humidParam->get(PARAM_HT_VALUE);
+  int hInt = h * 100;
+  h = hInt / 100.0; //get 2 digits
+
+  String statusT = "Normal";
+  String statusH = "Normal";
+
+  JsonObject Temperature = doc.createNestedObject("Temperature");
+  Temperature["value"] = t;
+  Temperature["alarm"] = _tempParam->get(PARAM_HT_ALARM);
+
+  JsonObject Humidity = doc.createNestedObject("Humidity");
+  Humidity["value"] = h;
+  Humidity["alarm"] = _humidParam->get(PARAM_HT_ALARM);
+
+  serializeJson(doc, output);
+
+  return output;
+}
+
+logsheetData SensorHT::getValuesHT()
+{
+  logsheetData dataHT;
+  dataHT.temperature = _tempParam->get(PARAM_HT_VALUE);
+  dataHT.humidity = _humidParam->get(PARAM_HT_VALUE);
+
+  return dataHT;
+}
+
+void SensorHT::_getSensorValue()
+{
+  float tRaw, hRaw; //raw data
+
+  float alfaEmaT = _tempParam->get(PARAM_HT_ALFA_EMA);
+  float alfaEmaH = _humidParam->get(PARAM_HT_ALFA_EMA);
+
+  float humidityAlarmH = _humidParam->get(PARAM_HT_HIGH_LIMIT);
+  float temperatureAlarmH = _tempParam->get(PARAM_HT_HIGH_LIMIT);
+
+  float tempHighLimit = _tempParam->get(PARAM_HT_HIGH_LIMIT) * 10.0;
+  float tempLowLimit = _tempParam->get(PARAM_HT_LOW_LIMIT) * 10.0;
+
+  float humidityHighLimit = _humidParam->get(PARAM_HT_HIGH_LIMIT) * 10.0;
+  float humidityLowLimit = _humidParam->get(PARAM_HT_LOW_LIMIT) * 10.0;
+
+  // get raw values from sensor
+  if (!SIMULATION)
+  {
+    tRaw = _dht->readTemperature(false);
+    hRaw = _dht->readHumidity();
+  }
+  else
+  {
+    tRaw = random(tempLowLimit, tempHighLimit) / 10.0;
+    hRaw = random(humidityLowLimit, humidityHighLimit) / 10.0;
+  }
+
+  //filtering raw value : AlfaEma filter
+  float facCurrentT = alfaEmaT / 100.0;
+  float facPrevT = (100.0 - alfaEmaT) / 100.0;
+  float t = tRaw * facCurrentT + facPrevT * _prevT;
+
+  float facCurrentH = alfaEmaH / 100.0;
+  float facPrevH = (100.0 - alfaEmaH) / 100.0;
+  float h = hRaw * facCurrentH + facPrevH * _prevH;
+
+  if (_prevT != tRaw)
+    _prevT = t;
+  if (_prevH != hRaw)
+    _prevH = h;
+
+  //set value
+  _tempParam->set(PARAM_HT_VALUE, t);
+  _humidParam->set(PARAM_HT_VALUE, h);
+
+  //set status
+  if (t >= temperatureAlarmH)
+  {
+    if (_tempParam->get(PARAM_HT_ALARM) != HIGH_ALARM)
+      _tempParam->set(PARAM_HT_ALARM, HIGH_ALARM);
+  }
+  else
+    _tempParam->set(PARAM_HT_ALARM, NO_ALARM);
+
+  if (h >= humidityAlarmH)
+  {
+    if (_humidParam->get(PARAM_HT_ALARM) != HIGH_ALARM)
+      _humidParam->set(PARAM_HT_ALARM, HIGH_ALARM);
+  }
+  else
+    _humidParam->set(PARAM_HT_ALARM, NO_ALARM);
 }

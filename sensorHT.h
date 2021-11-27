@@ -27,6 +27,7 @@ public:
   void setTime(struct tm);
   void execute(unsigned long); //sampling periode ms
   String getValues();          //return string in format Json for Temp, Humidity
+  logsheetData getValuesHT();  //return H,T
   void info();
 
 private:

@@ -77,7 +77,7 @@ const int PARAM_NODE_STATUS = 4;
 const int PARAM_NODE_MODE = 5;
 const int PARAM_NODE_CYCLIC = 6;
 const int PARAM_NODE_ON_DELAY = 7;
-const int PARAM_NODE_ON_OPERATION = 8;
+const int PARAM_NODE_ON_DURATION = 8;
 
 typedef struct userData
 {
@@ -170,10 +170,11 @@ class AccessParamNode
 public:
     AccessParamNode(String);
     String getJson();
+    String getStatus();
     paramNode get();
-    float get(int);
+    int get(int);
     void set(paramNode);
-    void set(int, float);
+    void set(int, int);
     void info();
 
 private:

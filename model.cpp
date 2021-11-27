@@ -277,3 +277,162 @@ void AccessParamHT::info()
 
     Serial.println(this->getJson());
 }
+
+//AccessParamNode - Class
+AccessParamNode::AccessParamNode(String id) : _id(id) {}
+
+String AccessParamNode::getJson()
+{
+    /*
+        {
+        "idNode": 15,
+        "mode": 1,
+        "cyclic": 0,
+        "onDelay": 1440,
+        "onDuration": 180
+        }
+    */
+    String strConfig;
+    StaticJsonDocument<96> doc;
+
+    doc["idNode"] = _paramNode.id;
+    doc["mode"] = _paramNode.mode;
+    doc["cyclic"] = _paramNode.cyclic;
+    doc["onDelay"] = _paramNode.onDelay;
+    doc["onDuration"] = _paramNode.onDuration;
+
+    serializeJson(doc, strConfig);
+
+    return strConfig;
+}
+
+String AccessParamNode::getStatus()
+{
+    /*
+        {
+        "mode": 1,
+        "status": 0,
+        "onDelay": 1440,
+        "onDuration": 180
+        }
+    */
+    String strStatus;
+    StaticJsonDocument<48> doc;
+
+    doc["modeOpr"] = _paramNode.modeOpr;
+    doc["status"] = _paramNode.status;
+    doc["onDelay"] = _paramNode.onDelay;
+    doc["onDuration"] = _paramNode.onDuration;
+
+    serializeJson(doc, strStatus);
+    return strStatus;
+}
+
+paramNode AccessParamNode::get()
+{
+    return _paramNode;
+}
+
+int AccessParamNode::get(int idParam)
+{
+    switch (idParam)
+    {
+    case PARAM_NODE_ID:
+        return _paramNode.id;
+        break;
+
+    case PARAM_NODE_PREV:
+        return _paramNode.prev;
+        break;
+
+    case PARAM_NODE_NEXT:
+        return _paramNode.next;
+        break;
+
+    case PARAM_NODE_MODE:
+        return _paramNode.mode;
+        break;
+
+    case PARAM_NODE_MODE_OPR:
+        return _paramNode.modeOpr;
+        break;
+
+    case PARAM_NODE_STATUS:
+        return _paramNode.status;
+        break;
+
+    case PARAM_NODE_CYCLIC:
+        return _paramNode.cyclic;
+        break;
+
+    case PARAM_NODE_ON_DELAY:
+        return (int)_paramNode.onDelay;
+        break;
+
+    case PARAM_NODE_ON_DURATION:
+        return (int)_paramNode.onDuration;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void AccessParamNode::set(paramNode dataParam)
+{
+
+    _paramNode = dataParam;
+}
+
+void AccessParamNode::set(int idParam, int val)
+{
+
+    switch (idParam)
+    {
+    case PARAM_NODE_ID:
+        _paramNode.id = val;
+        break;
+
+    case PARAM_NODE_PREV:
+        _paramNode.prev = val;
+        break;
+
+    case PARAM_NODE_NEXT:
+        _paramNode.next = val;
+        break;
+
+    case PARAM_NODE_MODE:
+        _paramNode.mode = val;
+        break;
+
+    case PARAM_NODE_MODE_OPR:
+        _paramNode.modeOpr = val;
+        break;
+
+    case PARAM_NODE_STATUS:
+        _paramNode.status = val;
+        break;
+
+    case PARAM_NODE_CYCLIC:
+        _paramNode.cyclic = val;
+        break;
+
+    case PARAM_NODE_ON_DELAY:
+        _paramNode.onDelay = (unsigned long)val;
+        break;
+
+    case PARAM_NODE_ON_DURATION:
+        _paramNode.onDuration = (unsigned long)val;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void AccessParamNode::info()
+{
+    Serial.println("AccessParamNode::info()");
+
+    Serial.println(this->getJson());
+}

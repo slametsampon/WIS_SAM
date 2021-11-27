@@ -35,6 +35,7 @@
 #include <ArduinoJson.h>
 
 #include "model.h"
+#include "utility.h"
 
 enum OUTPUT_STATUS
 {
@@ -68,22 +69,27 @@ class Node
 {
 public:
     Node(String);
-    String getConfig(); //JSON format
+    void attachFileSystem(FileSystem *);
+    void attachParam(AccessParamNode *);
+    void setTime(struct tm);
+    String getParam();  //JSON format
     String getStatus(); //JSON format
-    void setConfig(paramNode);
     void init(int);
     void execute(unsigned long); //sampling periode ms
     void info();
 
 private:
     int _operationLogic();
+    void _setDefaultParam();
+    void _setFileParam(String);
 
     boolean _firstRun = true;
     int _irrigationValve;
     String _id;
     unsigned long _prevMilli, _samplingTime, _prevOnDelay, _prevOnDuration;
-    paramNode _paramNode;
-    paramNode _test;
+
+    AccessParamNode *_nodeParam;
+    FileSystem *_localStorage;
     nodeStatus _nodeStatus;
 };
 

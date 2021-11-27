@@ -47,6 +47,7 @@ public:
     void info();
 
 private:
+    String _getTimeStr(int);
     String _getDayOfWeek(int);
     void _setupDefaultParamHT();
     void _setupFileParamHT(String);
