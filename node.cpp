@@ -36,11 +36,10 @@ void Node::_setFileParam(String fileName)
     char fileNameChar[31];
     fullFileName.toCharArray(fileNameChar, 31);
 
-    File file = LittleFS.open(fileNameChar, "r");
+    File file = _localStorage->readStream(fileNameChar);
+
     if (!file)
-    {
-        Serial.println("Failed to open file for reading");
-    }
+        return;
     else
     {
 

@@ -63,6 +63,7 @@ void setup()
     localStorage.listFilesInDir("/");
 
     /*KINDLY CONCERN OF ORDER SETUP BELLOW*/
+    samplingTime = DEFAULT_SAMPLING_TIME;
     setupSensorHT();
     setupLogsheet();
     /*--------------*/
@@ -84,10 +85,14 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
-    //blink(BLINK_NORMAL);
-    //get sensor and display to serial
-    if (sensorHT.execute(5000))
-        Serial.println(sensorHT.getValues());
+    //sensorHT
+    sensorHT.execute(samplingTime);
+
+    //logsheet
+    logsheet.execute(samplingTime);
+
+    //node
+    //control storage tank
 }
 
 //functions
