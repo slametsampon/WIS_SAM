@@ -95,6 +95,18 @@ String FileSystem::read(const char *path)
     return message;
 }
 
+File FileSystem::readStream(const char *path)
+{
+    Serial.printf("Reading file: %s\n", path);
+
+    File file = LittleFS.open(path, "r");
+    if (!file)
+    {
+        Serial.println("Failed to open file for reading");
+    }
+    return file;
+}
+
 void displaySerial(String label, String msg)
 {
     String str = String(label + " : ");

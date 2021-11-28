@@ -24,6 +24,7 @@ public:
   void append(const char *path, const char *message);
   void write(const char *path, const char *message);
   String read(const char *path);
+  File readStream(const char *path);
 
 private:
   String _id;

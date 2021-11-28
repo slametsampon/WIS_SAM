@@ -7,9 +7,10 @@
 #define OLED_RESET 0 // GPIO0
 
 const boolean DEBUG = true;
-const int BLINK_NORMAL = 1000; //milli second
-const int BLINK_WARNING = 250; //milli second
-const int BLINK_ERROR = 125;   //milli second
+const int DEFAULT_SAMPLING_TIME = 30000; //milli second
+const int BLINK_NORMAL = 1000;           //milli second
+const int BLINK_WARNING = 250;           //milli second
+const int BLINK_ERROR = 125;             //milli second
 
 // Replace with your network credentials
 const char *SSID_AP = "wis_sam";
