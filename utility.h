@@ -11,6 +11,9 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 
+const String PATH_ROOT = "/";
+const String FILE_USER = "users.cfg";
+
 const String PATH_LS = "/logsheet/";
 const String SENSOR_FILE_CFG = "sensors.cfg";
 const String HEADER = "TIME;TEMPERATURE;HUMIDITY\n";
@@ -27,5 +30,8 @@ public:
 private:
   String _id;
 };
+void displaySerial(String, int);
+void displaySerial(String, float);
+void displaySerial(String, String);
 
 #endif

@@ -15,8 +15,6 @@ Logsheet::Logsheet(String id) : _id(id)
 void Logsheet::attachSensor(SensorHT *sensorHT)
 {
     _sensorHT = sensorHT;
-    //_setupDefaultParameter();
-    _setupFileParamHT(SENSOR_FILE_CFG);
 }
 
 void Logsheet::attachFileSystem(FileSystem *lc)

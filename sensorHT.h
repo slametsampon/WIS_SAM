@@ -23,6 +23,7 @@ public:
   void attachFileSystem(FileSystem *);
   void attachTempParam(AccessParamHT *);
   void attachHumidParam(AccessParamHT *);
+  void setParam();
   String getParam();
   void setTime(struct tm);
   void execute(unsigned long); //sampling periode ms

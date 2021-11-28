@@ -94,3 +94,21 @@ String FileSystem::read(const char *path)
 
     return message;
 }
+
+void displaySerial(String label, String msg)
+{
+    String str = String(label + " : ");
+    str = String(str + msg);
+    Serial.println(str);
+}
+
+void displaySerial(String label, float value)
+{
+    String strValue = String(value);
+    displaySerial(label, strValue);
+}
+
+void displaySerial(String label, int value)
+{
+    displaySerial(label, (float)value);
+}

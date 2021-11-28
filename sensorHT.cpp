@@ -7,6 +7,11 @@ void SensorHT::attachSensor(DHT *dht)
   _dht = dht;
 }
 
+void SensorHT::attachFileSystem(FileSystem *lc)
+{
+  _localStorage = lc;
+}
+
 void SensorHT::attachTempParam(AccessParamHT *tempParam)
 {
   _tempParam = tempParam;
@@ -89,6 +94,14 @@ String SensorHT::getParam()
 
   serializeJson(doc, output);
   return output;
+}
+
+void SensorHT::setParam()
+{
+  if (SIMULATION)
+    this->_setDefaultParam();
+  else
+    this->_setFileParam(SENSOR_FILE_CFG);
 }
 
 void SensorHT::info()
@@ -213,7 +226,7 @@ void SensorHT::_setFileParam(String fileName)
   paramHT dtParam;
   Serial.println("SensorHT::_setFileParam(String fileName)");
 
-  String fullFileName = PATH_LS + fileName;
+  String fullFileName = PATH_ROOT + fileName;
 
   Serial.print("fullFileName : ");
   Serial.println(fullFileName);
