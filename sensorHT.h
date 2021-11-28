@@ -28,15 +28,15 @@ public:
   void setParam();
   String getParam();
   void setTime(struct tm);
-  void execute(unsigned long); //sampling periode ms
-  String getValues();          //return string in format Json for Temp, Humidity
-  logsheetData getValuesHT();  //return H,T
+  boolean execute(unsigned long); //sampling periode ms
+  String getValues();             //return string in format Json for Temp, Humidity
+  logsheetData getValuesHT();     //return H,T
   void info();
 
 private:
   String _id;
   float _prevT, _prevH; //temperature and humidity
-  unsigned long _prevMilli, _samplingTime;
+  unsigned long _prevMilli;
 
   FileSystem *_localStorage;
   DHT *_dht;
@@ -44,5 +44,6 @@ private:
   void _setDefaultParam();
   void _setFileParam(String);
   void _getSensorValue();
+  void _displaySerialHT();
 };
 #endif

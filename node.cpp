@@ -266,6 +266,9 @@ String Node::getStatus()
 void Node::info()
 {
     Serial.println("Node::info()");
+    Serial.print("_id : ");
+    Serial.println(_id);
+
     _nodeParam->info();
 }
 

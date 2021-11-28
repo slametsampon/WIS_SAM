@@ -105,6 +105,8 @@ String AccesUser::get(int idUser)
 void AccesUser::info()
 {
     Serial.println("AccesUser::info()");
+    Serial.print("_id : ");
+    Serial.println(_id);
 
     Serial.println(this->getJson());
 }
@@ -274,6 +276,8 @@ void AccessParamHT::set(int idParam, float val)
 void AccessParamHT::info()
 {
     Serial.println("AccessParamHT::info()");
+    Serial.print("_id : ");
+    Serial.println(_id);
 
     Serial.println(this->getJson());
 }
@@ -433,6 +437,8 @@ void AccessParamNode::set(int idParam, int val)
 void AccessParamNode::info()
 {
     Serial.println("AccessParamNode::info()");
+    Serial.print("_id : ");
+    Serial.println(_id);
 
     Serial.println(this->getJson());
 }

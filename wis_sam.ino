@@ -17,9 +17,9 @@ Nov '21
 #include "utility.h"
 #include "node.h"
 #include "logsheet.h"
-
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;
+unsigned long prevMilli = 0;
 
 AccesUser accessEngineer("accessEngineer");
 AccesUser accessOperator("accessOperator");
@@ -40,7 +40,7 @@ ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class,
 AsyncWebServer server(80);
 
 //functions prototype
-void setupLittleFS();
+boolean setupLittleFS();
 void setupSensorHT();
 void setupLogsheet();
 void setupNode();
@@ -50,18 +50,23 @@ void startWiFiMulti();
 
 void setup()
 {
+    pinMode(BUILTIN_LED, OUTPUT);
     Serial.begin(115200);
     while (!Serial)
     {
         ;
     }
 
+    if (!setupLittleFS())
+        return;
+
+    localStorage.listFilesInDir("/");
+
     /*KINDLY CONCERN OF ORDER SETUP BELLOW*/
-    setupLittleFS();
     setupSensorHT();
     setupLogsheet();
     /*--------------*/
-
+    /*
     setupNode();
 
     // Start WiFi
@@ -73,34 +78,39 @@ void setup()
 
     // Start server
     server.begin();
+*/
 }
 
 // the loop function runs over and over again forever
 void loop()
 {
+    //blink(BLINK_NORMAL);
+    //get sensor and display to serial
+    if (sensorHT.execute(5000))
+        Serial.println(sensorHT.getValues());
 }
 
 //functions
-void setupLittleFS()
+boolean setupLittleFS()
 {
     displaySerial("setup()", "LittleFS.begin()");
     if (!LittleFS.begin())
     {
         Serial.println("An Error has occurred while mounting LittleFS");
-        return;
+        return false;
     }
-    localStorage.listFilesInDir("/");
+    return true;
 }
 
 void setupSensorHT()
 {
     displaySerial("setup()", "setupSensorHT()");
     dhtSensor.begin();
-    sensorHT.setParam();
-    sensorHT.attachSensor(&dhtSensor);
-    sensorHT.attachFileSystem(&localStorage);
     sensorHT.attachHumidParam(&humidParam);
     sensorHT.attachTempParam(&tempParam);
+    sensorHT.attachSensor(&dhtSensor);
+    sensorHT.attachFileSystem(&localStorage);
+    sensorHT.setParam();
     sensorHT.info();
 }
 
