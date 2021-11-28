@@ -210,6 +210,7 @@ void Logsheet::_recordLogsheet()
     logsheetData last = _sensorHT->getValuesHT();
     last.time = _getTimeStr(_samplingSec);
 
+    //this->_print(last);
     _shiftArray(_nbrSamplingSec, last);
 
     //fill up trending data
@@ -237,7 +238,7 @@ void Logsheet::_minuteLogsheet()
 {
     _minuteEvent = false;
     Serial.print("Logsheet::_recordLogsheet() => _samplingMinute : ");
-    //Serial.println(_tm.tm_min);
+    displaySerial("Minute", _tm.tm_min);
 
     //calculate average minute
     logsheetData avgMinute = _calculateAverage(_logsheetSecond, _nbrSamplingSec);
@@ -251,7 +252,7 @@ void Logsheet::_hourlyLogsheet()
     _saveHourlyEvent = true; //reset
 
     Serial.print("Logsheet::_recordLogsheet() => _samplingHour : ");
-    Serial.println(_tm.tm_hour);
+    displaySerial("Hour", _tm.tm_hour);
 
     //calculate average hour & put average to bottom
     logsheetData avgHour = _calculateAverage(_logsheetMinute, MINUTE_60);
@@ -400,40 +401,17 @@ void Logsheet::_shiftArray(int size, logsheetData last)
 
     switch (size)
     {
-    case SECOND_6:
-        for (int i = 0; i < (size - 1); i++)
-        {
-            _logsheetSecond[i].temperature = _logsheetSecond[i + 1].temperature;
-            _logsheetSecond[i].humidity = _logsheetSecond[i + 1].humidity;
-            _logsheetSecond[i].time = _logsheetSecond[i + 1].time;
-
-            //print to serial
-            //_print(_logsheetSecond[i]);
-        }
-        _logsheetSecond[size - 1].temperature = last.temperature;
-        _logsheetSecond[size - 1].humidity = last.humidity;
-        _logsheetSecond[size - 1].time = last.time;
-
-        //print to serial
-        //_print(_logsheetSecond[size - 1]);
-        break;
-
     case TRENDING_24:
         for (int i = 0; i < (size - 1); i++)
         {
             _logsheetTrending[i].temperature = _logsheetTrending[i + 1].temperature;
             _logsheetTrending[i].humidity = _logsheetTrending[i + 1].humidity;
             _logsheetTrending[i].time = _logsheetTrending[i + 1].time;
-
-            //print to serial
-            //_print(_logsheetTrending[i]);
         }
         _logsheetTrending[size - 1].temperature = last.temperature;
         _logsheetTrending[size - 1].humidity = last.humidity;
         _logsheetTrending[size - 1].time = last.time;
 
-        //print to serial
-        //_print(_logsheetTrending[size - 1]);
         break;
 
     case MINUTE_60:
@@ -442,18 +420,23 @@ void Logsheet::_shiftArray(int size, logsheetData last)
             _logsheetMinute[i].temperature = _logsheetMinute[i + 1].temperature;
             _logsheetMinute[i].humidity = _logsheetMinute[i + 1].humidity;
             _logsheetMinute[i].time = _logsheetMinute[i + 1].time;
-
-            //print to serial
-            //_print(_logsheetMinute[i]);
         }
         _logsheetMinute[size - 1].temperature = last.temperature;
         _logsheetMinute[size - 1].humidity = last.humidity;
         _logsheetMinute[size - 1].time = last.time;
 
-        //print to serial
-        //_print(_logsheetMinute[size - 1]);
         break;
     default:
+        for (int i = 0; i < (size - 1); i++)
+        {
+            _logsheetSecond[i].temperature = _logsheetSecond[i + 1].temperature;
+            _logsheetSecond[i].humidity = _logsheetSecond[i + 1].humidity;
+            _logsheetSecond[i].time = _logsheetSecond[i + 1].time;
+        }
+        _logsheetSecond[size - 1].temperature = last.temperature;
+        _logsheetSecond[size - 1].humidity = last.humidity;
+        _logsheetSecond[size - 1].time = last.time;
+
         break;
     }
 }
@@ -463,6 +446,48 @@ logsheetData Logsheet::_calculateAverage(logsheetData data[], int size)
     float totalT, totalH;
     logsheetData avg;
     int nbrData = 0;
+
+    Serial.print("Logsheet::_calculateAverage() => size : ");
+    Serial.println(size);
+
+    for (int i = 0; i < size; i++)
+    {
+        if ((data[i].temperature > 0) || (data[i].humidity > 0))
+        {
+            totalT = totalT + data[i].temperature;
+            totalH = totalH + data[i].humidity;
+            nbrData++;
+            _print(data[i]);
+        }
+    }
+
+    float avgT, avgH;
+    if ((nbrData > 0) && (nbrData <= size))
+    {
+        avgT = totalT / nbrData;
+        avgH = totalH / nbrData;
+    }
+
+    avg.temperature = avgT;
+    avg.humidity = avgH;
+
+    if (size == _nbrSamplingSec)
+        avg.time = _getTimeStr(_tm.tm_min);
+    else if (size == MINUTE_60)
+        avg.time = _getTimeStr(_tm.tm_hour);
+    else if (size == HOUR_24)
+    {
+        //build DD_MM_YYYY
+        String date = _getTimeStr(_tm.tm_mday);
+        date += "_";
+        date += _getTimeStr(_tm.tm_mon);
+        date += "_";
+        date += _getTimeStr(_tm.tm_year);
+        avg.time = date;
+    }
+
+    Serial.println("Average : ");
+    _print(avg);
 
     return avg;
 }

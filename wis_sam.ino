@@ -85,13 +85,13 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
-    if (sensorHT.execute(samplingTime))
-    {
-        Serial.println(sensorHT.getValues());
-        //logsheet
-        //node
-    }
+    //sensorHT
+    sensorHT.execute(samplingTime);
 
+    //logsheet
+    logsheet.execute(samplingTime);
+
+    //node
     //control storage tank
 }
 
