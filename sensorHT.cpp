@@ -104,9 +104,31 @@ void SensorHT::setParam()
     this->_setFileParam(SENSOR_FILE_CFG);
 }
 
+boolean SensorHT::execute(unsigned long samplingTime)
+{
+  boolean active = false;
+  unsigned long currMilli = millis();
+
+  if ((currMilli - _prevMilli) >= samplingTime)
+  {
+    active = true;
+    _prevMilli = currMilli;
+
+    //get sensor value H.T
+    this->_getSensorValue();
+
+    //display serial H,T
+    this->_displaySerialHT();
+  }
+  return active;
+}
+
 void SensorHT::info()
 {
   Serial.println("SensorHT::info()");
+  Serial.print("_id : ");
+  Serial.println(_id);
+
   _tempParam->info();
   _humidParam->info();
 }
@@ -393,4 +415,13 @@ void SensorHT::_getSensorValue()
   }
   else
     _humidParam->set(PARAM_HT_ALARM, NO_ALARM);
+}
+
+void SensorHT::_displaySerialHT()
+{
+  float t = _tempParam->get(PARAM_HT_VALUE);
+  float h = _humidParam->get(PARAM_HT_VALUE);
+
+  displaySerial("t", t);
+  displaySerial("h", h);
 }

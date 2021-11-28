@@ -25,6 +25,9 @@ void Logsheet::attachFileSystem(FileSystem *lc)
 void Logsheet::info()
 {
     Serial.println("Logsheet::info()");
+    Serial.print("_id : ");
+    Serial.println(_id);
+
     _sensorHT->info();
 }
 
