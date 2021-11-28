@@ -15,6 +15,8 @@
 #include "utility.h"
 #include "sensorHT.h"
 
+const String HEADER = "TIME;TEMPERATURE;HUMIDITY\n";
+
 const int DAY_366 = 366;
 const int HOUR_24 = 24;
 const int MINUTE_60 = 60;

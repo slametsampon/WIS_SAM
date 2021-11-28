@@ -15,6 +15,8 @@
 #include "model.h"
 #include "utility.h"
 
+const String SENSOR_FILE_CFG = "sensors.cfg";
+
 class SensorHT
 {
 public:

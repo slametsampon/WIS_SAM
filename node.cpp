@@ -11,6 +11,7 @@ void Node::attachParam(AccessParamNode *nodeParam)
 {
     _nodeParam = nodeParam;
 }
+
 void Node::init(int pin)
 {
     _irrigationValve = pin;
@@ -22,8 +23,52 @@ void Node::init(int pin)
         this->_setFileParam("String");
 }
 
-void Node::_setFileParam(String)
+void Node::_setFileParam(String fileName)
 {
+    paramNode dtParam;
+    Serial.println("Node::_setFileParam(String fileName)");
+
+    String fullFileName = PATH_ROOT + fileName;
+
+    Serial.print("fullFileName : ");
+    Serial.println(fullFileName);
+
+    char fileNameChar[31];
+    fullFileName.toCharArray(fileNameChar, 31);
+
+    File file = LittleFS.open(fileNameChar, "r");
+    if (!file)
+    {
+        Serial.println("Failed to open file for reading");
+    }
+    else
+    {
+
+        StaticJsonDocument<512> doc;
+
+        DeserializationError error = deserializeJson(doc, file);
+
+        if (error)
+        {
+            Serial.print(F("deserializeJson() failed: "));
+            Serial.println(error.f_str());
+            return;
+        }
+
+        JsonObject node = doc["node"];
+        //parameter Node
+        dtParam.id = node["id"];
+        dtParam.prev = node["prev"];
+        dtParam.next = node["next"];
+        dtParam.mode = node["mode"];
+        dtParam.cyclic = node["cyclic"];
+        dtParam.modeOpr = node["modeOpr"];
+        dtParam.onDelay = node["onDelay"];
+        dtParam.onDuration = node["onDuration"];
+        _nodeParam->set(dtParam);
+
+        file.close();
+    }
 }
 
 void Node::_setDefaultParam()
@@ -34,6 +79,8 @@ void Node::_setDefaultParam()
 
     //set default value
     dtParam.id = 9;
+    dtParam.prev = 8;
+    dtParam.next = 10;
     dtParam.mode = AUTO;
     dtParam.cyclic = ONE_SHOOT;
     dtParam.onDelay = 90;    //minute
@@ -214,6 +261,12 @@ String Node::getStatus()
 
     serializeJson(doc, strStatus);
     return strStatus;
+}
+
+void Node::info()
+{
+    Serial.println("Node::info()");
+    _nodeParam->info();
 }
 
 int Node::_operationLogic()

@@ -15,8 +15,6 @@ const String PATH_ROOT = "/";
 const String FILE_USER = "users.cfg";
 
 const String PATH_LS = "/logsheet/";
-const String SENSOR_FILE_CFG = "sensors.cfg";
-const String HEADER = "TIME;TEMPERATURE;HUMIDITY\n";
 
 class FileSystem
 {

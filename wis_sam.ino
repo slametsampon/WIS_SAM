@@ -43,6 +43,7 @@ AsyncWebServer server(80);
 void setupLittleFS();
 void setupSensorHT();
 void setupLogsheet();
+void setupNode();
 void startWIFI_AP();
 void startWiFiClient();
 void startWiFiMulti();
@@ -60,6 +61,8 @@ void setup()
     setupSensorHT();
     setupLogsheet();
     /*--------------*/
+
+    setupNode();
 
     // Start WiFi
     if (AP_MODE)
@@ -107,6 +110,15 @@ void setupLogsheet()
     logsheet.attachFileSystem(&localStorage);
     logsheet.attachSensor(&sensorHT);
     logsheet.info();
+}
+
+void setupNode()
+{
+    displaySerial("setup()", "setupNode()");
+    node.attachFileSystem(&localStorage);
+    node.attachParam(&nodeParam);
+    node.init(D4);
+    node.info();
 }
 
 void startWiFiMulti()

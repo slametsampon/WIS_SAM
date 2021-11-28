@@ -37,6 +37,8 @@
 #include "model.h"
 #include "utility.h"
 
+const String NODE_FILE_CFG = "node.cfg";
+
 enum OUTPUT_STATUS
 {
     IDLE,
