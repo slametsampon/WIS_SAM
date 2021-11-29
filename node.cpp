@@ -25,6 +25,39 @@ void Node::init(int pin)
 
 void Node::_setFileParam(String fileName)
 {
+    /*
+    {
+    "id": 12,
+    "prev": 11,
+    "next": 11,
+    "mode": 2,
+    "cyclic": 1,
+    "modeOpr": 3,
+    "onDelay": 45,
+    "onDuration": 15
+    }
+    // Stream& input;
+
+    StaticJsonDocument<192> doc;
+
+    DeserializationError error = deserializeJson(doc, input);
+
+    if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+    }
+
+    int id = doc["id"]; // 12
+    int prev = doc["prev"]; // 11
+    int next = doc["next"]; // 11
+    int mode = doc["mode"]; // 2
+    int cyclic = doc["cyclic"]; // 1
+    int modeOpr = doc["modeOpr"]; // 3
+    int onDelay = doc["onDelay"]; // 45
+    int onDuration = doc["onDuration"]; // 15
+    
+    */
     paramNode dtParam;
     Serial.println("Node::_setFileParam(String fileName)");
 
@@ -43,7 +76,7 @@ void Node::_setFileParam(String fileName)
     else
     {
 
-        StaticJsonDocument<512> doc;
+        StaticJsonDocument<192> doc;
 
         DeserializationError error = deserializeJson(doc, file);
 
