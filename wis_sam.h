@@ -27,6 +27,7 @@ const char *PASSWORD4 = "Faryganteng";
 bool AP_MODE = false; // Do yo want the ESP as AP?
 
 //NTP : Network Time Protokol
+const boolean NTP_AVAILABLE = false;
 const long timezone = 6; //for jakarta time
 const byte daysavetime = 1;
 
