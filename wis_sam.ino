@@ -11,15 +11,20 @@ Nov '21
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ESP8266WiFiMulti.h>
+#include "RTClib.h"
 
 #include "wis_sam.h"
 #include "sensorHT.h"
 #include "utility.h"
 #include "node.h"
 #include "logsheet.h"
+
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;
 unsigned long prevMilli = 0;
+
+//software RTC - simulation
+RTC_Millis rtc;
 
 AccesUser accessEngineer("accessEngineer");
 AccesUser accessOperator("accessOperator");
@@ -40,6 +45,7 @@ ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class,
 AsyncWebServer server(80);
 
 //functions prototype
+void setupRtc();
 boolean setupLittleFS();
 void setupSensorHT();
 void setupLogsheet();
@@ -57,10 +63,14 @@ void setup()
         ;
     }
 
+    //setup LittleFS - local storage
     if (!setupLittleFS())
         return;
 
     localStorage.listFilesInDir("/");
+
+    //setup RTC
+    setupRtc();
 
     /*KINDLY CONCERN OF ORDER SETUP BELLOW*/
     samplingTime = DEFAULT_SAMPLING_TIME;
@@ -86,7 +96,8 @@ void setup()
 void loop()
 {
     //sensorHT
-    sensorHT.execute(samplingTime);
+    if (sensorHT.execute(samplingTime))
+        logsheet.setTime(getTime());
 
     //logsheet
     logsheet.execute(samplingTime);
@@ -180,4 +191,71 @@ void startWIFI_AP()
     WiFi.softAP(SSID1, PASSWORD1);
     Serial.println("AP started");
     Serial.println("IP address: " + WiFi.softAPIP().toString());
+}
+
+struct tm getTime()
+{
+    struct tm tmstruct;
+    if (NTP_AVAILABLE)
+    {
+        Serial.println("Contacting Time Server");
+        configTime(3600 * timezone, daysavetime * 3600, "time.nist.gov", "0.pool.ntp.org", "1.pool.ntp.org");
+        delay(2000);
+        tmstruct.tm_year = 0;
+        getLocalTime(&tmstruct, 5000);
+
+        //set offset to 1900, month +1
+        tmstruct.tm_year += 1900;
+        tmstruct.tm_mon += 1;
+    }
+    else
+    {
+        Serial.println("get time from RTC");
+        DateTime now = rtc.now();
+        tmstruct.tm_year = now.year();
+        tmstruct.tm_mon = now.month();
+        tmstruct.tm_mday = now.day();
+        tmstruct.tm_hour = now.hour();
+        tmstruct.tm_min = now.minute();
+        tmstruct.tm_sec = now.second();
+    }
+
+    return tmstruct;
+}
+
+//NTP
+bool getLocalTime(struct tm *info, uint32_t ms)
+{
+    uint32_t count = ms / 10;
+    time_t now;
+
+    time(&now);
+    localtime_r(&now, info);
+
+    if (info->tm_year > (2016 - 1900))
+    {
+        return true;
+    }
+
+    while (count--)
+    {
+        delay(10);
+        time(&now);
+        localtime_r(&now, info);
+        if (info->tm_year > (2016 - 1900))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//setup RTC
+void setupRtc()
+{
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
+    // This line sets the RTC with an explicit date & time, for example to set
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
 }

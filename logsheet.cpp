@@ -114,6 +114,15 @@ String Logsheet::_initRandomJson()
     return output;
 }
 
+void Logsheet::setTime(struct tm tmVal)
+{
+    //set local time _tm
+    _tm = tmVal;
+    Serial.println("Logsheet::setTime(struct tm tmVal)");
+    Serial.printf("Now is : %d-%02d-%02d %02d:%02d:%02d\n", _tm.tm_year, _tm.tm_mon, _tm.tm_mday, _tm.tm_hour, _tm.tm_min, _tm.tm_sec);
+    Serial.println("");
+}
+
 void Logsheet::execute(unsigned long samplingTime)
 {
 
