@@ -123,6 +123,8 @@ void Node::_setDefaultParam()
 void Node::execute(unsigned long samplingTime)
 {
     int nodeStatus = IDLE;
+    unsigned long valTime; //on milli Second
+
     if ((millis() - _prevMilli) > samplingTime)
     {
         _prevMilli = millis();
@@ -143,8 +145,9 @@ void Node::execute(unsigned long samplingTime)
             {
                 if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
@@ -153,8 +156,9 @@ void Node::execute(unsigned long samplingTime)
                 {
                     if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         nodeStatus = IDLE;
                         _firstRun = true;
@@ -174,8 +178,9 @@ void Node::execute(unsigned long samplingTime)
             {
                 if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
@@ -184,8 +189,9 @@ void Node::execute(unsigned long samplingTime)
                 {
                     if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         _prevOnDelay = millis();
                         nodeStatus = WAIT;
@@ -209,8 +215,9 @@ void Node::execute(unsigned long samplingTime)
             {
                 if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
@@ -219,8 +226,9 @@ void Node::execute(unsigned long samplingTime)
                 {
                     if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         nodeStatus = IDLE;
                         _firstRun = true;
@@ -233,7 +241,7 @@ void Node::execute(unsigned long samplingTime)
             break;
         }
 
-        _nodeStatus.status = nodeStatus;
+        _nodeParam->set(PARAM_NODE_STATUS, nodeStatus);
 
         if (nodeStatus == ACTIVE)
         {

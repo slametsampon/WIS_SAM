@@ -288,41 +288,43 @@ AccessParamNode::AccessParamNode(String id) : _id(id) {}
 String AccessParamNode::getJson()
 {
     /*
-        {
-        "idNode": 15,
-        "mode": 1,
-        "cyclic": 0,
-        "onDelaySet": 1440,
-        "onDurationSet": 180,
-        "onDelayAcc": 1440,
-        "onDurationAcc": 180
-        }
+    {
+    "id": 12,
+    "mode": 2,
+    "cyclic": 1,
+    "modeOpr": 3,
+    "onDelaySet": 45,
+    "onDurationSet": 15,
+    "onDelayAcc": 45,
+    "onDurationAcc": 15
+    }
+    // Stream& input;
 
-        // Stream& input;
+    StaticJsonDocument<256> doc;
 
-        StaticJsonDocument<192> doc;
+    DeserializationError error = deserializeJson(doc, input);
 
-        DeserializationError error = deserializeJson(doc, input);
+    if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+    }
 
-        if (error) {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-        }
-
-        int idNode = doc["idNode"]; // 15
-        int mode = doc["mode"]; // 1
-        int cyclic = doc["cyclic"]; // 0
-        int onDelaySet = doc["onDelaySet"]; // 1440
-        int onDurationSet = doc["onDurationSet"]; // 180
-        int onDelayAcc = doc["onDelayAcc"]; // 1440
-        int onDurationAcc = doc["onDurationAcc"]; // 180
+    int id = doc["id"]; // 12
+    int mode = doc["mode"]; // 2
+    int cyclic = doc["cyclic"]; // 1
+    int modeOpr = doc["modeOpr"]; // 3
+    int onDelaySet = doc["onDelaySet"]; // 45
+    int onDurationSet = doc["onDurationSet"]; // 15
+    int onDelayAcc = doc["onDelayAcc"]; // 45
+    int onDurationAcc = doc["onDurationAcc"]; // 15
     */
     String strConfig;
-    StaticJsonDocument<192> doc;
+    StaticJsonDocument<256> doc;
 
-    doc["idNode"] = _paramNode.id;
+    doc["id"] = _paramNode.id;
     doc["mode"] = _paramNode.mode;
+    doc["modeOpr"] = _paramNode.modeOpr;
     doc["cyclic"] = _paramNode.cyclic;
     doc["onDelaySet"] = _paramNode.setting.onDelay;
     doc["onDurationSet"] = _paramNode.setting.onDuration;

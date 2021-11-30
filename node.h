@@ -92,7 +92,6 @@ private:
 
     AccessParamNode *_nodeParam;
     FileSystem *_localStorage;
-    nodeStatus _nodeStatus;
 };
 
 #endif
