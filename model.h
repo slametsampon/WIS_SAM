@@ -70,14 +70,14 @@ const int HIGH_ALARM = 1;
 const int LOW_ALARM = 2;
 
 const int PARAM_NODE_ID = 0;
-const int PARAM_NODE_PREV = 1;
-const int PARAM_NODE_NEXT = 2;
-const int PARAM_NODE_MODE_OPR = 3;
-const int PARAM_NODE_STATUS = 4;
-const int PARAM_NODE_MODE = 5;
-const int PARAM_NODE_CYCLIC = 6;
-const int PARAM_NODE_ON_DELAY = 7;
-const int PARAM_NODE_ON_DURATION = 8;
+const int PARAM_NODE_MODE_OPR = 1;
+const int PARAM_NODE_STATUS = 2;
+const int PARAM_NODE_MODE = 3;
+const int PARAM_NODE_CYCLIC = 4;
+const int PARAM_NODE_SET_ON_DELAY = 5;
+const int PARAM_NODE_SET_ON_DURATION = 6;
+const int PARAM_NODE_ACC_ON_DELAY = 7;
+const int PARAM_NODE_ACC_ON_DURATION = 8;
 
 typedef struct userData
 {
@@ -143,17 +143,21 @@ private:
 
 }; //end of class
 
+typedef struct oDeDu
+{
+    unsigned long onDelay;
+    unsigned long onDuration;
+} oDeDu;
+
 typedef struct paramNode
 {
     int id;      // 0 - 99
-    int prev;    // 0 - 99
-    int next;    // 0 - 99
     int modeOpr; //(Auto, Manual-one, Manual-cyc, Manual-con)
     int status;  //(Idle, Wait, Active)
     int mode;    //(Manual = 0, Auto = 1, Repeater = 2)
     int cyclic;  // (One Shoot = 0, Cyclic = 1)
-    unsigned long onDelay;
-    unsigned long onDuration;
+    oDeDu setting;
+    oDeDu acc;
 } paramNode;
 
 typedef struct nodeStatus
