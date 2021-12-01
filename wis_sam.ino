@@ -16,8 +16,10 @@ Nov '21
 #include "wis_sam.h"
 #include "sensorHT.h"
 #include "utility.h"
-#include "node.h"
 #include "logsheet.h"
+#include "node.h"
+#include "ic.h"
+#include "wsc.h"
 
 String loginSts = "FIRST_TIME";
 unsigned long samplingTime = 0;
@@ -34,11 +36,18 @@ AccessParamHT tempParam("Temperature Parameter");
 AccessParamHT humidParam("Humidity Parameter");
 AccessParamNode nodeParam("Node Parameter");
 
+FileSystem localStorage("local storage");
+Logsheet logsheet("logsheet");
+
 DHT dhtSensor(DHTPIN, DHTTYPE);
 SensorHT sensorHT("sensor HT");
-FileSystem localStorage("local storage");
-Node node("node");
-Logsheet logsheet("logsheet");
+Node node1("node-1");
+Node node2("node-2");
+Node node3("node-3");
+Node node4("node-4");
+IC ic("Irrigation Control");
+
+WSC wsc("Water Storage Control");
 
 ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 // Create AsyncWebServer object on port 80
@@ -50,6 +59,7 @@ boolean setupLittleFS();
 void setupSensorHT();
 void setupLogsheet();
 void setupNode();
+void setupIC();
 void startWIFI_AP();
 void startWiFiClient();
 void startWiFiMulti();
@@ -77,9 +87,12 @@ void setup()
     setupSensorHT();
     setupLogsheet();
     /*--------------*/
-    /*
-    setupNode();
 
+    setupNode();
+    setupIC();
+    setupWSC();
+
+    /*
     // Start WiFi
     if (AP_MODE)
         startWIFI_AP();
@@ -141,10 +154,41 @@ void setupLogsheet()
 void setupNode()
 {
     displaySerial("setup()", "setupNode()");
-    node.attachFileSystem(&localStorage);
-    node.attachParam(&nodeParam);
-    node.init(D4);
-    node.info();
+    node1.attachFileSystem(&localStorage);
+    node1.attachParam(&nodeParam);
+    node1.init(D4);
+    node1.info();
+
+    node2.attachFileSystem(&localStorage);
+    node2.attachParam(&nodeParam);
+    node2.init(D5);
+    node2.info();
+
+    node3.attachFileSystem(&localStorage);
+    node3.attachParam(&nodeParam);
+    node3.init(D6);
+    node3.info();
+
+    node4.attachFileSystem(&localStorage);
+    node4.attachParam(&nodeParam);
+    node4.init(D7);
+    node4.info();
+}
+
+void setupIC()
+{
+    displaySerial("setup()", "setupIC()");
+    ic.addNode(&node1);
+    ic.addNode(&node2);
+    ic.addNode(&node3);
+    ic.addNode(&node4);
+
+    ic.info();
+}
+
+void setupWSC()
+{
+    displaySerial("setup()", "setupWSC()");
 }
 
 void startWiFiMulti()

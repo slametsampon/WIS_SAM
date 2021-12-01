@@ -288,22 +288,48 @@ AccessParamNode::AccessParamNode(String id) : _id(id) {}
 String AccessParamNode::getJson()
 {
     /*
-        {
-        "idNode": 15,
-        "mode": 1,
-        "cyclic": 0,
-        "onDelay": 1440,
-        "onDuration": 180
-        }
+    {
+    "id": 12,
+    "mode": 2,
+    "cyclic": 1,
+    "modeOpr": 3,
+    "onDelaySet": 45,
+    "onDurationSet": 15,
+    "onDelayAcc": 45,
+    "onDurationAcc": 15
+    }
+    // Stream& input;
+
+    StaticJsonDocument<256> doc;
+
+    DeserializationError error = deserializeJson(doc, input);
+
+    if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+    }
+
+    int id = doc["id"]; // 12
+    int mode = doc["mode"]; // 2
+    int cyclic = doc["cyclic"]; // 1
+    int modeOpr = doc["modeOpr"]; // 3
+    int onDelaySet = doc["onDelaySet"]; // 45
+    int onDurationSet = doc["onDurationSet"]; // 15
+    int onDelayAcc = doc["onDelayAcc"]; // 45
+    int onDurationAcc = doc["onDurationAcc"]; // 15
     */
     String strConfig;
-    StaticJsonDocument<96> doc;
+    StaticJsonDocument<256> doc;
 
-    doc["idNode"] = _paramNode.id;
+    doc["id"] = _paramNode.id;
     doc["mode"] = _paramNode.mode;
+    doc["modeOpr"] = _paramNode.modeOpr;
     doc["cyclic"] = _paramNode.cyclic;
-    doc["onDelay"] = _paramNode.onDelay;
-    doc["onDuration"] = _paramNode.onDuration;
+    doc["onDelaySet"] = _paramNode.setting.onDelay;
+    doc["onDurationSet"] = _paramNode.setting.onDuration;
+    doc["onDelayAcc"] = _paramNode.acc.onDelay;
+    doc["onDurationAcc"] = _paramNode.acc.onDuration;
 
     serializeJson(doc, strConfig);
 
@@ -325,8 +351,8 @@ String AccessParamNode::getStatus()
 
     doc["modeOpr"] = _paramNode.modeOpr;
     doc["status"] = _paramNode.status;
-    doc["onDelay"] = _paramNode.onDelay;
-    doc["onDuration"] = _paramNode.onDuration;
+    doc["onDelay"] = _paramNode.setting.onDelay;
+    doc["onDuration"] = _paramNode.setting.onDuration;
 
     serializeJson(doc, strStatus);
     return strStatus;
@@ -345,14 +371,6 @@ int AccessParamNode::get(int idParam)
         return _paramNode.id;
         break;
 
-    case PARAM_NODE_PREV:
-        return _paramNode.prev;
-        break;
-
-    case PARAM_NODE_NEXT:
-        return _paramNode.next;
-        break;
-
     case PARAM_NODE_MODE:
         return _paramNode.mode;
         break;
@@ -369,12 +387,20 @@ int AccessParamNode::get(int idParam)
         return _paramNode.cyclic;
         break;
 
-    case PARAM_NODE_ON_DELAY:
-        return (int)_paramNode.onDelay;
+    case PARAM_NODE_SET_ON_DELAY:
+        return (int)_paramNode.setting.onDelay;
         break;
 
-    case PARAM_NODE_ON_DURATION:
-        return (int)_paramNode.onDuration;
+    case PARAM_NODE_SET_ON_DURATION:
+        return (int)_paramNode.setting.onDuration;
+        break;
+
+    case PARAM_NODE_ACC_ON_DELAY:
+        return (int)_paramNode.acc.onDelay;
+        break;
+
+    case PARAM_NODE_ACC_ON_DURATION:
+        return (int)_paramNode.acc.onDuration;
         break;
 
     default:
@@ -397,14 +423,6 @@ void AccessParamNode::set(int idParam, int val)
         _paramNode.id = val;
         break;
 
-    case PARAM_NODE_PREV:
-        _paramNode.prev = val;
-        break;
-
-    case PARAM_NODE_NEXT:
-        _paramNode.next = val;
-        break;
-
     case PARAM_NODE_MODE:
         _paramNode.mode = val;
         break;
@@ -421,12 +439,20 @@ void AccessParamNode::set(int idParam, int val)
         _paramNode.cyclic = val;
         break;
 
-    case PARAM_NODE_ON_DELAY:
-        _paramNode.onDelay = (unsigned long)val;
+    case PARAM_NODE_SET_ON_DELAY:
+        _paramNode.setting.onDelay = (unsigned long)val;
         break;
 
-    case PARAM_NODE_ON_DURATION:
-        _paramNode.onDuration = (unsigned long)val;
+    case PARAM_NODE_SET_ON_DURATION:
+        _paramNode.setting.onDuration = (unsigned long)val;
+        break;
+
+    case PARAM_NODE_ACC_ON_DELAY:
+        _paramNode.acc.onDelay = (unsigned long)val;
+        break;
+
+    case PARAM_NODE_ACC_ON_DURATION:
+        _paramNode.acc.onDuration = (unsigned long)val;
         break;
 
     default:

@@ -25,6 +25,39 @@ void Node::init(int pin)
 
 void Node::_setFileParam(String fileName)
 {
+    /*
+    {
+    "id": 12,
+    "prev": 11,
+    "next": 11,
+    "mode": 2,
+    "cyclic": 1,
+    "modeOpr": 3,
+    "onDelay": 45,
+    "onDuration": 15
+    }
+    // Stream& input;
+
+    StaticJsonDocument<192> doc;
+
+    DeserializationError error = deserializeJson(doc, input);
+
+    if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+    }
+
+    int id = doc["id"]; // 12
+    int prev = doc["prev"]; // 11
+    int next = doc["next"]; // 11
+    int mode = doc["mode"]; // 2
+    int cyclic = doc["cyclic"]; // 1
+    int modeOpr = doc["modeOpr"]; // 3
+    int onDelay = doc["onDelay"]; // 45
+    int onDuration = doc["onDuration"]; // 15
+    
+    */
     paramNode dtParam;
     Serial.println("Node::_setFileParam(String fileName)");
 
@@ -43,7 +76,7 @@ void Node::_setFileParam(String fileName)
     else
     {
 
-        StaticJsonDocument<512> doc;
+        StaticJsonDocument<192> doc;
 
         DeserializationError error = deserializeJson(doc, file);
 
@@ -57,13 +90,13 @@ void Node::_setFileParam(String fileName)
         JsonObject node = doc["node"];
         //parameter Node
         dtParam.id = node["id"];
-        dtParam.prev = node["prev"];
-        dtParam.next = node["next"];
         dtParam.mode = node["mode"];
         dtParam.cyclic = node["cyclic"];
         dtParam.modeOpr = node["modeOpr"];
-        dtParam.onDelay = node["onDelay"];
-        dtParam.onDuration = node["onDuration"];
+        dtParam.setting.onDelay = node["onDelaySet"];
+        dtParam.setting.onDuration = node["onDurationSet"];
+        dtParam.acc.onDelay = node["onDelayAcc"];
+        dtParam.acc.onDuration = node["onDurationAcc"];
         _nodeParam->set(dtParam);
 
         file.close();
@@ -78,18 +111,20 @@ void Node::_setDefaultParam()
 
     //set default value
     dtParam.id = 9;
-    dtParam.prev = 8;
-    dtParam.next = 10;
     dtParam.mode = AUTO;
     dtParam.cyclic = ONE_SHOOT;
-    dtParam.onDelay = 90;    //minute
-    dtParam.onDuration = 35; //minute
+    dtParam.setting.onDelay = 90;    //minute
+    dtParam.setting.onDuration = 35; //minute
+    dtParam.acc.onDelay = 90;        //minute
+    dtParam.acc.onDuration = 35;     //minute
     _nodeParam->set(dtParam);
 }
 
 void Node::execute(unsigned long samplingTime)
 {
     int nodeStatus = IDLE;
+    unsigned long valTime; //on milli Second
+
     if ((millis() - _prevMilli) > samplingTime)
     {
         _prevMilli = millis();
@@ -108,20 +143,22 @@ void Node::execute(unsigned long samplingTime)
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_ON_DELAY) * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_ON_DURATION) * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         nodeStatus = IDLE;
                         _firstRun = true;
@@ -139,20 +176,22 @@ void Node::execute(unsigned long samplingTime)
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_ON_DELAY) * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_ON_DURATION) * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         _prevOnDelay = millis();
                         nodeStatus = WAIT;
@@ -174,20 +213,22 @@ void Node::execute(unsigned long samplingTime)
             }
             else
             {
-                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_ON_DELAY) * 60 * 1000))
+                if ((millis() - _prevOnDelay) > (_nodeParam->get(PARAM_NODE_SET_ON_DELAY) * 60 * 1000))
                 {
-                    _nodeStatus.onDelay = (millis() - _prevOnDelay) / (1000 * 60);
-                    _nodeStatus.onDelay = _nodeParam->get(PARAM_NODE_ON_DELAY) - _nodeStatus.onDelay;
+                    valTime = (millis() - _prevOnDelay) / (1000 * 60);
+                    valTime = _nodeParam->get(PARAM_NODE_SET_ON_DELAY) - _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+                    _nodeParam->set(PARAM_NODE_ACC_ON_DELAY, valTime);
 
                     nodeStatus = ACTIVE;
                     _prevOnDuration = millis();
                 }
                 else
                 {
-                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_ON_DURATION) * 60 * 1000))
+                    if ((millis() - _prevOnDuration) > (_nodeParam->get(PARAM_NODE_SET_ON_DURATION) * 60 * 1000))
                     {
-                        _nodeStatus.onDuration = (millis() - _prevOnDuration) / (1000 * 60);
-                        _nodeStatus.onDuration = _nodeParam->get(PARAM_NODE_ON_DURATION) - _nodeStatus.onDuration;
+                        valTime = (millis() - _prevOnDuration) / (1000 * 60);
+                        valTime = _nodeParam->get(PARAM_NODE_SET_ON_DURATION) - _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
+                        _nodeParam->set(PARAM_NODE_ACC_ON_DURATION, valTime);
 
                         nodeStatus = IDLE;
                         _firstRun = true;
@@ -200,7 +241,7 @@ void Node::execute(unsigned long samplingTime)
             break;
         }
 
-        _nodeStatus.status = nodeStatus;
+        _nodeParam->set(PARAM_NODE_STATUS, nodeStatus);
 
         if (nodeStatus == ACTIVE)
         {
@@ -232,8 +273,8 @@ String Node::getParam()
     doc["idNode"] = _nodeParam->get(PARAM_NODE_ID);
     doc["mode"] = _nodeParam->get(PARAM_NODE_MODE);
     doc["cyclic"] = _nodeParam->get(PARAM_NODE_CYCLIC);
-    doc["onDelay"] = _nodeParam->get(PARAM_NODE_ON_DELAY);
-    doc["onDuration"] = _nodeParam->get(PARAM_NODE_ON_DURATION);
+    doc["onDelay"] = _nodeParam->get(PARAM_NODE_SET_ON_DELAY);
+    doc["onDuration"] = _nodeParam->get(PARAM_NODE_SET_ON_DURATION);
 
     serializeJson(doc, strConfig);
 
@@ -253,10 +294,10 @@ String Node::getStatus()
     String strStatus;
     StaticJsonDocument<48> doc;
 
-    doc["mode"] = _nodeStatus.mode;
-    doc["status"] = _nodeStatus.status;
-    doc["onDelay"] = _nodeStatus.onDelay;
-    doc["onDuration"] = _nodeStatus.onDuration;
+    doc["mode"] = _nodeParam->get(PARAM_NODE_MODE);
+    doc["status"] = _nodeParam->get(PARAM_NODE_STATUS);
+    doc["onDelay"] = _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);
+    doc["onDuration"] = _nodeParam->get(PARAM_NODE_ACC_ON_DURATION);
 
     serializeJson(doc, strStatus);
     return strStatus;
@@ -275,7 +316,7 @@ int Node::_operationLogic()
 {
     int mode = _nodeParam->get(PARAM_NODE_MODE);
     int cyclic = _nodeParam->get(PARAM_NODE_CYCLIC);
-    unsigned long onDelay = _nodeParam->get(PARAM_NODE_ON_DELAY);
+    unsigned long onDelay = _nodeParam->get(PARAM_NODE_SET_ON_DELAY);
     int oprMode = IDLE;
 
     switch (mode)
@@ -305,6 +346,6 @@ int Node::_operationLogic()
     default:
         break;
     }
-    _nodeStatus.mode = oprMode;
+    _nodeParam->set(PARAM_NODE_MODE_OPR, oprMode);
     return oprMode;
 }
