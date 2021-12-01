@@ -1,6 +1,6 @@
 
 /*********
- * WIS - Wireless Irrigation System :
+ * Node :
  * 
  * Operation Mode :
  * Auto - (No Delay)
@@ -77,7 +77,7 @@ public:
     String getParam();  //JSON format
     String getStatus(); //JSON format
     void init(int);
-    void execute(unsigned long); //sampling periode ms
+    void execute(unsigned long); // ms
     void info();
 
 private:
