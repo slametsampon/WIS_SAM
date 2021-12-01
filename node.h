@@ -2,32 +2,7 @@
 /*********
  * Node :
  * 
- * Operation Mode :
- * Auto - (No Delay)
- * Manual - cyclic (On Delay, On Duration)
- * Manual - continuous (On DElay = 0, On Duration)
- * Manual - Off/Idle (On Duration = 0)
- * 
- * data model :
- * paramNode = {
- *  "idNode" : 9,
- *  "mode" : 1, (Stop = 0, Manual = 1, Auto = 2)
- *  "cyclic" : 0, (One Shoot = 0, Cyclic = 1)
- *  "onDelay" : xxxx,
- *  "onDuration" : yyyy
- * }
- * status = {
- *  "status" : 0, (Idle =0, 
- *                Wait = 1, 
- *                Active = 2,
- *                Manual-One = 3,
- *                Manual-Cyc = 4,
- *                Manual-Con = 5,
- *  )
- *  "onDelay" : xxxx,
- *  "onDuration" : yyyy
- * }
-*********/
+ *********/
 #ifndef node_h
 #define node_h
 
@@ -39,26 +14,25 @@
 
 const String NODE_FILE_CFG = "node.cfg";
 
-enum OUTPUT_STATUS
+enum MODE
+{
+    AUTO,
+    MANUAL
+};
+
+enum STATUS_OPR
 {
     IDLE,
     WAIT,
     ACTIVE
 };
 
-enum STATUS_OPR
+enum MODE_OPR
 {
-    DUMMY_AUTO,
+    AUTO_OPR,
     MANUAL_ONE,
     MANUAL_CYC,
     MANUAL_CON
-};
-
-enum MODE_OPR
-{
-    AUTO,
-    MANUAL,
-    STOP
 };
 
 enum CYCLIC_OPR

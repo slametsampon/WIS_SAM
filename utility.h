@@ -32,6 +32,5 @@ private:
 void displaySerial(String, int);
 void displaySerial(String, float);
 void displaySerial(String, String);
-void blink(unsigned long, int);
 
 #endif

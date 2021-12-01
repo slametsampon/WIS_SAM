@@ -66,7 +66,7 @@ void startWiFiMulti();
 
 void setup()
 {
-    pinMode(BUILTIN_LED, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(115200);
     while (!Serial)
     {
@@ -108,6 +108,10 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
+
+    blinkLED(BLINK_NORMAL);
+    //blinkLED(1000);
+
     //sensorHT
     if (sensorHT.execute(samplingTime))
         logsheet.setTime(getTime());
@@ -302,4 +306,14 @@ void setupRtc()
     // This line sets the RTC with an explicit date & time, for example to set
     // January 21, 2014 at 3am you would call:
     // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+}
+
+void blinkLED(unsigned long blinkTime)
+{
+    if ((millis() - prevMilli) >= blinkTime)
+    {
+        //displaySerial("blinkLED()", (int)blinkTime);
+        prevMilli = millis();
+        digitalWrite(LED_BUILTIN, digitalRead(LED_BUILTIN) ^ 1);
+    }
 }

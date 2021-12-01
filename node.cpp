@@ -28,17 +28,18 @@ void Node::_setFileParam(String fileName)
     /*
     {
     "id": 12,
-    "prev": 11,
-    "next": 11,
     "mode": 2,
     "cyclic": 1,
+    "status": 2,
     "modeOpr": 3,
-    "onDelay": 45,
-    "onDuration": 15
+    "onDelaySet": 45,
+    "onDurationSet": 15,
+    "onDelayAcc": 45,
+    "onDurationAcc": 15
     }
     // Stream& input;
 
-    StaticJsonDocument<192> doc;
+    StaticJsonDocument<256> doc;
 
     DeserializationError error = deserializeJson(doc, input);
 
@@ -49,14 +50,14 @@ void Node::_setFileParam(String fileName)
     }
 
     int id = doc["id"]; // 12
-    int prev = doc["prev"]; // 11
-    int next = doc["next"]; // 11
     int mode = doc["mode"]; // 2
     int cyclic = doc["cyclic"]; // 1
+    int status = doc["status"]; // 2
     int modeOpr = doc["modeOpr"]; // 3
-    int onDelay = doc["onDelay"]; // 45
-    int onDuration = doc["onDuration"]; // 15
-    
+    int onDelaySet = doc["onDelaySet"]; // 45
+    int onDurationSet = doc["onDurationSet"]; // 15
+    int onDelayAcc = doc["onDelayAcc"]; // 45
+    int onDurationAcc = doc["onDurationAcc"]; // 15
     */
     paramNode dtParam;
     Serial.println("Node::_setFileParam(String fileName)");
@@ -76,7 +77,7 @@ void Node::_setFileParam(String fileName)
     else
     {
 
-        StaticJsonDocument<192> doc;
+        StaticJsonDocument<256> doc;
 
         DeserializationError error = deserializeJson(doc, file);
 
@@ -92,6 +93,7 @@ void Node::_setFileParam(String fileName)
         dtParam.id = node["id"];
         dtParam.mode = node["mode"];
         dtParam.cyclic = node["cyclic"];
+        dtParam.status = node["status"];
         dtParam.modeOpr = node["modeOpr"];
         dtParam.setting.onDelay = node["onDelaySet"];
         dtParam.setting.onDuration = node["onDurationSet"];
@@ -260,21 +262,21 @@ String Node::getParam()
 {
     /*
         {
-        "idNode": 15,
+        "id": 15,
         "mode": 1,
         "cyclic": 0,
-        "onDelay": 1440,
-        "onDuration": 180
+        "onDelaySet": 1440,
+        "onDurationSet": 180
         }
     */
     String strConfig;
-    StaticJsonDocument<96> doc;
+    StaticJsonDocument<192> doc;
 
-    doc["idNode"] = _nodeParam->get(PARAM_NODE_ID);
+    doc["id"] = _nodeParam->get(PARAM_NODE_ID);
     doc["mode"] = _nodeParam->get(PARAM_NODE_MODE);
     doc["cyclic"] = _nodeParam->get(PARAM_NODE_CYCLIC);
-    doc["onDelay"] = _nodeParam->get(PARAM_NODE_SET_ON_DELAY);
-    doc["onDuration"] = _nodeParam->get(PARAM_NODE_SET_ON_DURATION);
+    doc["onDelaySet"] = _nodeParam->get(PARAM_NODE_SET_ON_DELAY);
+    doc["onDurationSet"] = _nodeParam->get(PARAM_NODE_SET_ON_DURATION);
 
     serializeJson(doc, strConfig);
 
@@ -285,15 +287,17 @@ String Node::getStatus()
 {
     /*
         {
+        "id": 15,
         "mode": 1,
         "status": 0,
-        "onDelay": 1440,
-        "onDuration": 180
+        "onDelayAcc": 1440,
+        "onDurationAcc": 180
         }
     */
     String strStatus;
-    StaticJsonDocument<48> doc;
+    StaticJsonDocument<192> doc;
 
+    doc["id"] = _nodeParam->get(PARAM_NODE_ID);
     doc["mode"] = _nodeParam->get(PARAM_NODE_MODE);
     doc["status"] = _nodeParam->get(PARAM_NODE_STATUS);
     doc["onDelay"] = _nodeParam->get(PARAM_NODE_ACC_ON_DELAY);

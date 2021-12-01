@@ -1,7 +1,7 @@
 #ifndef wis_sam_h
 #define wis_sam_h
 
-#define DHTPIN 2 // what pin we're connected to ????
+#define DHTPIN D2 // what pin we're connected to ????
 
 #define DHTTYPE DHT11
 #define OLED_RESET 0 // GPIO0
