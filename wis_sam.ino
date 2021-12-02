@@ -13,6 +13,7 @@ Nov '21
 #include <ESP8266WiFiMulti.h>
 #include "RTClib.h"
 
+#include "constants.h"
 #include "wis_sam.h"
 #include "sensorHT.h"
 #include "utility.h"
@@ -110,7 +111,6 @@ void loop()
 {
 
     blinkLED(BLINK_NORMAL);
-    //blinkLED(1000);
 
     //sensorHT
     if (sensorHT.execute(samplingTime))
@@ -119,8 +119,11 @@ void loop()
     //logsheet
     logsheet.execute(samplingTime);
 
-    //node
     //control storage tank
+    wsc.execute();
+
+    //irrigation control included node execution
+    ic.execute(wsc.getStatus(), samplingTime);
 }
 
 //functions
@@ -160,22 +163,22 @@ void setupNode()
     displaySerial("setup()", "setupNode()");
     node1.attachFileSystem(&localStorage);
     node1.attachParam(&nodeParam);
-    node1.init(D4);
+    node1.init(GROUP1_PIN);
     node1.info();
 
     node2.attachFileSystem(&localStorage);
     node2.attachParam(&nodeParam);
-    node2.init(D5);
+    node2.init(GROUP2_PIN);
     node2.info();
 
     node3.attachFileSystem(&localStorage);
     node3.attachParam(&nodeParam);
-    node3.init(D6);
+    node3.init(GROUP3_PIN);
     node3.info();
 
     node4.attachFileSystem(&localStorage);
     node4.attachParam(&nodeParam);
-    node4.init(D7);
+    node4.init(GROUP4_PIN);
     node4.info();
 }
 
@@ -193,6 +196,8 @@ void setupIC()
 void setupWSC()
 {
     displaySerial("setup()", "setupWSC()");
+    wsc.init(LEVEL_PIN, PUMP_PIN);
+    wsc.info();
 }
 
 void startWiFiMulti()

@@ -45,6 +45,7 @@ float increment = doc["increment"]; // 1.1
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "constants.h"
 
 const int USER_NAME = 0;
 const int USER_PASSWORD = 1;
@@ -54,7 +55,6 @@ const int USER_LEVEL = 3;
 const int LEVEL_ENGINEER = 0;
 const int LEVEL_OPERATOR = 9;
 
-const boolean SIMULATION = true;
 const int ALFA_EMA = 80;
 
 const int PARAM_HT_VALUE = 0;

@@ -32,6 +32,7 @@
 
 #include <Arduino.h>
 #include "node.h"
+#include "constants.h"
 
 const int NODE_MAX = 4;
 
@@ -40,7 +41,7 @@ class IC
 public:
     IC(String);
     void addNode(Node *);
-    void execute(unsigned long); // ms
+    void execute(int, unsigned long); // ms
     void info();
 
 private:

@@ -21,12 +21,16 @@ void IC::info()
     }
 }
 
-void IC::execute(unsigned long samplingTime)
+void IC::execute(int levelStatus, unsigned long samplingTime)
 {
     if ((millis() - _prevMilli) > samplingTime)
     {
         _prevMilli = millis();
 
-        //do process here
+        //check level storage tank (ST)
+        if (levelStatus == FULL)
+        {
+            //do the irrigation logic
+        }
     }
 }

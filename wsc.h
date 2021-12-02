@@ -7,26 +7,23 @@
 #define wsc_h
 
 #include <Arduino.h>
-
-enum ST_STATUS
-{
-    FULL,
-    EMPTY
-};
+#include "constants.h"
 
 class WSC
 {
 public:
     WSC(String);
-    void init(int);
+    void init(int, int);
     int getStatus();
     void execute();
     void info();
 
 private:
     String _id;
-    int _status;
+    int _status, _levelSensor, _pump;
     unsigned long _prevMilli;
+
+    boolean _getSensorLevel();
 };
 
 #endif

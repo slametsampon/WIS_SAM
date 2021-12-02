@@ -6,12 +6,12 @@
 #define DHTTYPE DHT11
 #define OLED_RESET 0 // GPIO0
 
-const boolean DEBUG = true;
-
-const int DEFAULT_SAMPLING_TIME = 30000; //milli second
-const int BLINK_NORMAL = 1000;           //milli second
-const int BLINK_WARNING = 250;           //milli second
-const int BLINK_ERROR = 125;             //milli second
+#define LEVEL_PIN D3
+#define PUMP_PIN D4
+#define GROUP1_PIN D5
+#define GROUP2_PIN D6
+#define GROUP3_PIN D7
+#define GROUP4_PIN D8
 
 // Replace with your network credentials
 const char *SSID_AP = "wis_sam";
